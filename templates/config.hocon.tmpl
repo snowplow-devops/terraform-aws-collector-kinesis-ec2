@@ -1,0 +1,93 @@
+collector {
+  interface = "0.0.0.0"
+  port = ${port}
+  ssl {
+    enable = false
+    redirect = false
+    port = 8443
+  }
+  paths {}
+  p3p {
+    policyRef = "/w3c/p3p.xml"
+    CP = "NOI DSP COR NID PSA OUR IND COM NAV STA"
+  }
+  crossDomain {
+    enabled = false
+    domains = [ "*" ]
+    secure = true
+  }
+  cookie {
+    enabled = true
+    expiration = "365 days"
+    name = sp
+    domains = []
+    fallbackDomain = "${cookie_domain}"
+    secure = true
+    httpOnly = false
+    sameSite = "None"
+  }
+  doNotTrackCookie {
+    enabled = false
+    name = ""
+    value = ""
+  }
+  cookieBounce {
+    enabled = false
+    name = "n3pc"
+    fallbackNetworkUserId = "00000000-0000-4000-A000-000000000000"
+    forwardedProtocolHeader = "X-Forwarded-Proto"
+  }
+  enableDefaultRedirect = false
+  redirectMacro {
+    enabled = false
+    placeholder = "[TOKEN]"
+  }
+  rootResponse {
+    enabled = false
+    statusCode = 302
+    headers = {}
+    body = "302, redirecting"
+  }
+  cors {
+    accessControlMaxAge = "5 seconds"
+  }
+  prometheusMetrics {
+    enabled = false
+  }
+  streams {
+    good = ${good_stream_name}
+    bad = ${bad_stream_name}
+    useIpAddressAsPartitionKey = false
+    sink {
+      enabled = kinesis
+      region = ${region}
+      threadPoolSize = 10
+      aws {
+        accessKey = iam
+        secretKey = iam
+      }
+      backoffPolicy {
+        minBackoff = 3000
+        maxBackoff = 10000
+      }
+    }
+    buffer {
+      byteLimit = 1000000
+      recordLimit = 500
+      timeLimit = 50
+    }
+  }
+}
+akka {
+  loglevel = WARNING
+  loggers = ["akka.event.slf4j.Slf4jLogger"]
+  http.server {
+    remote-address-header = on
+    raw-request-uri-header = on
+    parsing {
+      max-uri-length = 32768
+      uri-parsing-mode = relaxed
+    }
+    max-connections = 2048
+  }
+}
