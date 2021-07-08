@@ -99,6 +99,24 @@ variable "cookie_domain" {
   type        = string
 }
 
+variable "byte_limit" {
+  description = "The amount of bytes to buffer events before pushing them to Kinesis"
+  default     = 1000000
+  type        = number
+}
+
+variable "record_limit" {
+  description = "The number of events to buffer before pushing them to Kinesis"
+  default     = 500
+  type        = number
+}
+
+variable "time_limit_ms" {
+  description = "The amount of time to buffer events before pushing them to Kinesis"
+  default     = 500
+  type        = number
+}
+
 # --- Telemetry
 
 variable "telemetry_enabled" {

@@ -72,9 +72,9 @@ collector {
       }
     }
     buffer {
-      byteLimit = 1000000
-      recordLimit = 500
-      timeLimit = 50
+      byteLimit = ${byte_limit}
+      recordLimit = ${record_limit}
+      timeLimit = ${time_limit_ms}
     }
   }
 }

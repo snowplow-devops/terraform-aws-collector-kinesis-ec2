@@ -192,6 +192,10 @@ locals {
     good_stream_name = var.good_stream_name
     bad_stream_name  = var.bad_stream_name
     region           = data.aws_region.current.name
+
+    byte_limit    = var.byte_limit
+    record_limit  = var.record_limit
+    time_limit_ms = var.time_limit_ms
   })
 
   user_data = templatefile("${path.module}/templates/user-data.sh.tmpl", {
