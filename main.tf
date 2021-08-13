@@ -17,6 +17,8 @@ locals {
     var.tags,
     local.local_tags
   )
+
+  cloudwatch_log_group_name = "/aws/ec2/${var.name}"
 }
 
 data "aws_region" "current" {}
@@ -56,6 +58,17 @@ data "aws_ami" "amazon_linux_2" {
   }
 
   owners = ["amazon"]
+}
+
+# --- CloudWatch: Logging
+
+resource "aws_cloudwatch_log_group" "log_group" {
+  count = var.cloudwatch_logs_enabled ? 1 : 0
+
+  name              = local.cloudwatch_log_group_name
+  retention_in_days = var.cloudwatch_logs_retention_days
+
+  tags = local.tags
 }
 
 # --- IAM: Roles & Permissions
@@ -99,6 +112,17 @@ resource "aws_iam_policy" "iam_policy" {
       "Resource": [
         "arn:aws:kinesis:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stream/${var.good_stream_name}",
         "arn:aws:kinesis:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stream/${var.bad_stream_name}"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:PutLogEvents",
+        "logs:CreateLogStream",
+        "logs:DescribeLogStreams"
+      ],
+      "Resource": [
+        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${local.cloudwatch_log_group_name}:*"
       ]
     }
   ]
@@ -204,6 +228,9 @@ locals {
     version = local.app_version
 
     telemetry_script = join("", module.telemetry.*.amazon_linux_2_user_data)
+
+    cloudwatch_logs_enabled   = var.cloudwatch_logs_enabled
+    cloudwatch_log_group_name = local.cloudwatch_log_group_name
   })
 }
 
