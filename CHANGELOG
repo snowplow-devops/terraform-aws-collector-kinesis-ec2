@@ -1,3 +1,10 @@
+Version 0.1.2 (2021-08-13)
+--------------------------
+Update License badge to use HTTPS (#2)
+Add Terraform Registry badge (#3)
+Add badge for source application repository (#4)
+Add support for CloudWatch logs (#5)
+
 Version 0.1.1 (2021-07-08)
 --------------------------
 Make buffer limits configurable (#1)
