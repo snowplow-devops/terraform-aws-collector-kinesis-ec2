@@ -25,21 +25,21 @@ A Collector requires two output Kinesis Streams and a Load Balancer which is dep
 ```hcl
 module "raw_stream" {
   source  = "snowplow-devops/kinesis-stream/aws"
-  version = "0.1.0"
+  version = "0.1.1"
 
   name = "raw-stream"
 }
 
 module "bad_1_stream" {
   source  = "snowplow-devops/kinesis-stream/aws"
-  version = "0.1.0"
+  version = "0.1.1"
 
   name = "bad-1-stream"
 }
 
 module "collector_lb" {
   source  = "snowplow-devops/alb/aws"
-  version = "0.1.0"
+  version = "0.1.1"
 
   name              = "collector-lb"
   vpc_id            = var.vpc_id
@@ -81,8 +81,8 @@ module "collector_kinesis" {
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_tags"></a> [tags](#module\_tags) | snowplow-devops/tags/aws | 0.1.0 |
-| <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.1.0 |
+| <a name="module_tags"></a> [tags](#module\_tags) | snowplow-devops/tags/aws | 0.1.1 |
+| <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.2.0 |
 
 ## Resources
 
