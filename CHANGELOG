@@ -1,3 +1,8 @@
+Version 0.2.0 (2021-08-30)
+--------------------------
+Leverage CloudWatch Logs as default (#7)
+Bump Stream Collector to v2.3.1 (#8)
+
 Version 0.1.2 (2021-08-13)
 --------------------------
 Update License badge to use HTTPS (#2)
