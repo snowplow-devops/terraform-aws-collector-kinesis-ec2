@@ -9,7 +9,7 @@ variable "vpc_id" {
 }
 
 variable "subnet_ids" {
-  description = "The list of subnets to deploy the collector across"
+  description = "The list of at least two subnets in different availability zones to deploy the collector across"
   type        = list(string)
 }
 
