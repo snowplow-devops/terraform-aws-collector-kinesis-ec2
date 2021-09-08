@@ -41,7 +41,7 @@ variable "associate_public_ip_address" {
 }
 
 variable "ssh_key_name" {
-  description = "The name of the SSH key-pair to attach to all EC2 nodes deployed"
+  description = "The name of the preexisting SSH key-pair to attach to all EC2 nodes deployed"
   type        = string
 }
 
