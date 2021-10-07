@@ -3,7 +3,7 @@ locals {
   module_version = "0.2.0"
 
   app_name    = "stream-collector"
-  app_version = "2.3.1"
+  app_version = "2.4.5"
 
   local_tags = {
     Name           = var.name
@@ -220,6 +220,13 @@ locals {
     byte_limit    = var.byte_limit
     record_limit  = var.record_limit
     time_limit_ms = var.time_limit_ms
+
+    disable           = !tobool(var.telemetry_enabled)
+    telemetry_url     = join("", module.telemetry.*.collector_uri)
+    user_provided_id  = var.user_provided_id
+    module_name       = local.module_name
+    module_version    = local.module_version
+    auto_generated_id = join("", module.telemetry.*.auto_generated_id)
   })
 
   user_data = templatefile("${path.module}/templates/user-data.sh.tmpl", {
