@@ -1,3 +1,7 @@
+Version 0.2.1 (2021-12-23)
+--------------------------
+Bump stream-collector to 2.4.5 (#16)
+
 Version 0.2.0 (2021-08-30)
 --------------------------
 Leverage CloudWatch Logs as default (#7)
