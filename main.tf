@@ -1,9 +1,9 @@
 locals {
   module_name    = "collector-kinesis-ec2"
-  module_version = "0.2.1"
+  module_version = "0.2.2"
 
   app_name    = "stream-collector"
-  app_version = "2.4.5"
+  app_version = "2.5.0"
 
   local_tags = {
     Name           = var.name
