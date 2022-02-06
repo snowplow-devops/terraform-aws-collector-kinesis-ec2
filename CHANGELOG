@@ -1,3 +1,11 @@
+Version 0.3.0 (2021-02-09)
+--------------------------
+Bump stream-collector to 2.5.0 (#17)
+Allow the collector.paths section of the config to be configured (#18)
+Clarify ssh_key_name should be an existing key (#12)
+Clarify the expected values for subnet_ids (#11)
+Update copyright to 2022 (#19)
+
 Version 0.2.1 (2021-12-23)
 --------------------------
 Bump stream-collector to 2.4.5 (#16)
