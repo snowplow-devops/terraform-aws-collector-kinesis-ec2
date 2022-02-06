@@ -64,6 +64,7 @@ module "collector_kinesis" {
 }
 ```
 
+<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -116,8 +117,8 @@ module "collector_kinesis" {
 | <a name="input_good_stream_name"></a> [good\_stream\_name](#input\_good\_stream\_name) | The name of the good kinesis stream that the collector will insert data into | `string` | n/a | yes |
 | <a name="input_ingress_port"></a> [ingress\_port](#input\_ingress\_port) | The port that the collector will be bound to and expose over HTTP | `number` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | A name which will be pre-pended to the resources created | `string` | n/a | yes |
-| <a name="input_ssh_key_name"></a> [ssh\_key\_name](#input\_ssh\_key\_name) | The name of the SSH key-pair to attach to all EC2 nodes deployed | `string` | n/a | yes |
-| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of subnets to deploy the collector across | `list(string)` | n/a | yes |
+| <a name="input_ssh_key_name"></a> [ssh\_key\_name](#input\_ssh\_key\_name) | The name of the preexisting SSH key-pair to attach to all EC2 nodes deployed | `string` | n/a | yes |
+| <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of at least two subnets in different availability zones to deploy the collector across | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC to deploy the collector within | `string` | n/a | yes |
 | <a name="input_amazon_linux_2_ami_id"></a> [amazon\_linux\_2\_ami\_id](#input\_amazon\_linux\_2\_ami\_id) | The AMI ID to use which must be based of of Amazon Linux 2; by default the latest community version is used | `string` | `""` | no |
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Whether to assign a public ip address to this instance | `bool` | `true` | no |
@@ -125,6 +126,7 @@ module "collector_kinesis" {
 | <a name="input_cloudwatch_logs_enabled"></a> [cloudwatch\_logs\_enabled](#input\_cloudwatch\_logs\_enabled) | Whether application logs should be reported to CloudWatch | `bool` | `true` | no |
 | <a name="input_cloudwatch_logs_retention_days"></a> [cloudwatch\_logs\_retention\_days](#input\_cloudwatch\_logs\_retention\_days) | The length of time in days to retain logs for | `number` | `7` | no |
 | <a name="input_cookie_domain"></a> [cookie\_domain](#input\_cookie\_domain) | Optional first party cookie domain for the collector to set cookies on (e.g. acme.com) | `string` | `""` | no |
+| <a name="input_custom_paths"></a> [custom\_paths](#input\_custom\_paths) | Optional custom paths that the collector will respond to, typical paths to override are '/com.snowplowanalytics.snowplow/tp2', '/com.snowplowanalytics.iglu/v1' and '/r/tp2'. e.g. { "/custom/path/" : "/com.snowplowanalytics.snowplow/tp2"} | `map(string)` | `{}` | no |
 | <a name="input_iam_permissions_boundary"></a> [iam\_permissions\_boundary](#input\_iam\_permissions\_boundary) | The permissions boundary ARN to set on IAM roles created | `string` | `""` | no |
 | <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type to use | `string` | `"t3.micro"` | no |
 | <a name="input_max_size"></a> [max\_size](#input\_max\_size) | The maximum number of servers in this server-group | `number` | `2` | no |
@@ -143,6 +145,7 @@ module "collector_kinesis" {
 | <a name="output_asg_id"></a> [asg\_id](#output\_asg\_id) | ID of the ASG |
 | <a name="output_asg_name"></a> [asg\_name](#output\_asg\_name) | Name of the ASG |
 | <a name="output_sg_id"></a> [sg\_id](#output\_sg\_id) | ID of the security group attached to the Collector Server node |
+<!-- END_TF_DOCS -->
 
 # Copyright and license
 
