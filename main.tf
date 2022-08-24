@@ -288,6 +288,8 @@ resource "aws_autoscaling_group" "asg" {
   target_group_arns   = [var.collector_lb_tg_id]
   vpc_zone_identifier = var.subnet_ids
 
+  enabled_metrics = var.enable_autoscaling_metrics
+  
   instance_refresh {
     strategy = "Rolling"
     preferences {

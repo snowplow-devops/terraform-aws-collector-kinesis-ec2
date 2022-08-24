@@ -148,3 +148,9 @@ variable "user_provided_id" {
   type        = string
   default     = ""
 }
+
+variable "enable_autoscaling_metrics" { 
+  description = "List of metrics to be enabled on the autoscaling group." 
+  type = list(string) 
+  default = [] 
+}
