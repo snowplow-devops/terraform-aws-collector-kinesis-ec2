@@ -114,6 +114,7 @@ module "collector_kinesis" {
 | <a name="input_bad_stream_name"></a> [bad\_stream\_name](#input\_bad\_stream\_name) | The name of the bad kinesis stream that the collector will insert data into | `string` | n/a | yes |
 | <a name="input_collector_lb_sg_id"></a> [collector\_lb\_sg\_id](#input\_collector\_lb\_sg\_id) | The ID of the load-balancer security group that sits upstream of the webserver | `string` | n/a | yes |
 | <a name="input_collector_lb_tg_id"></a> [collector\_lb\_tg\_id](#input\_collector\_lb\_tg\_id) | The ID of the load-balancer target group to direct traffic from the load-balancer to the webserver | `string` | n/a | yes |
+| <a name="input_enable_autoscaling_metrics"></a> [enable\_autoscaling\_metrics](#input\_enable\_autoscaling\_metrics) | List of metrics to enable on the autoscaling group | `list(string)` | `[]` | no |
 | <a name="input_good_stream_name"></a> [good\_stream\_name](#input\_good\_stream\_name) | The name of the good kinesis stream that the collector will insert data into | `string` | n/a | yes |
 | <a name="input_ingress_port"></a> [ingress\_port](#input\_ingress\_port) | The port that the collector will be bound to and expose over HTTP | `number` | n/a | yes |
 | <a name="input_name"></a> [name](#input\_name) | A name which will be pre-pended to the resources created | `string` | n/a | yes |
