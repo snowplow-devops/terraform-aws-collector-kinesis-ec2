@@ -1,4 +1,9 @@
-Version 0.3.0 (2021-02-09)
+Version 0.4.0 (2022-11-25)
+--------------------------
+Increase memory allocation for application (#24)
+Bump app_version to v2.8.2 (#25)
+
+Version 0.3.0 (2022-02-09)
 --------------------------
 Bump stream-collector to 2.5.0 (#17)
 Allow the collector.paths section of the config to be configured (#18)
