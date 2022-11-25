@@ -31,6 +31,7 @@ sudo docker run \
   --name collector \
   --restart always \
   --network host \
+  --memory=${container_memory} \
 %{ if cloudwatch_logs_enabled ~}
   --log-driver awslogs \
   --log-opt awslogs-group=${cloudwatch_log_group_name} \
@@ -41,7 +42,7 @@ sudo docker run \
 %{ endif ~}
   -v $${CONFIG_DIR}:/snowplow/config \
   -p ${port}:${port} \
-  -e 'JAVA_OPTS=-Dorg.slf4j.simpleLogger.defaultLogLevel=info -Dcom.amazonaws.sdk.disableCbor' \
+  -e '${java_opts}' \
   snowplow/scala-stream-collector-kinesis:${version} \
   --config /snowplow/config/collector.hocon
 
