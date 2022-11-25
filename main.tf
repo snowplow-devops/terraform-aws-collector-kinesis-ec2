@@ -26,7 +26,7 @@ data "aws_caller_identity" "current" {}
 
 module "telemetry" {
   source  = "snowplow-devops/telemetry/snowplow"
-  version = "0.2.0"
+  version = "0.3.0"
 
   count = var.telemetry_enabled ? 1 : 0
 
@@ -209,6 +209,13 @@ resource "aws_security_group_rule" "lb_egress_tcp_webserver" {
 
 # --- EC2: Auto-scaling group & Launch Configurations
 
+module "instance_type_metrics" {
+  source  = "snowplow-devops/ec2-instance-type-metrics/aws"
+  version = "0.1.2"
+
+  instance_type = var.instance_type
+}
+
 locals {
   collector_hocon = templatefile("${path.module}/templates/config.hocon.tmpl", {
     port             = var.ingress_port
@@ -239,6 +246,9 @@ locals {
 
     cloudwatch_logs_enabled   = var.cloudwatch_logs_enabled
     cloudwatch_log_group_name = local.cloudwatch_log_group_name
+
+    container_memory = "${module.instance_type_metrics.memory_application_mb}m"
+    java_opts        = var.java_opts
   })
 }
 
@@ -269,7 +279,7 @@ resource "aws_launch_configuration" "lc" {
 
 module "tags" {
   source  = "snowplow-devops/tags/aws"
-  version = "0.1.1"
+  version = "0.2.0"
 
   tags = local.tags
 }

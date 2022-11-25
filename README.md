@@ -25,21 +25,21 @@ A Collector requires two output Kinesis Streams and a Load Balancer which is dep
 ```hcl
 module "raw_stream" {
   source  = "snowplow-devops/kinesis-stream/aws"
-  version = "0.1.1"
+  version = "0.2.0"
 
   name = "raw-stream"
 }
 
 module "bad_1_stream" {
   source  = "snowplow-devops/kinesis-stream/aws"
-  version = "0.1.1"
+  version = "0.2.0"
 
   name = "bad-1-stream"
 }
 
 module "collector_lb" {
   source  = "snowplow-devops/alb/aws"
-  version = "0.1.1"
+  version = "0.2.0"
 
   name              = "collector-lb"
   vpc_id            = var.vpc_id
@@ -64,26 +64,26 @@ module "collector_kinesis" {
 }
 ```
 
-<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.15 |
-| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.25.0 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.0.0 |
+| <a name="requirement_aws"></a> [aws](#requirement\_aws) | >= 3.45.0 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.25.0 |
+| <a name="provider_aws"></a> [aws](#provider\_aws) | >= 3.45.0 |
 
 ## Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_tags"></a> [tags](#module\_tags) | snowplow-devops/tags/aws | 0.1.1 |
-| <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.2.0 |
+| <a name="module_instance_type_metrics"></a> [instance\_type\_metrics](#module\_instance\_type\_metrics) | snowplow-devops/ec2-instance-type-metrics/aws | 0.1.2 |
+| <a name="module_tags"></a> [tags](#module\_tags) | snowplow-devops/tags/aws | 0.2.0 |
+| <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.3.0 |
 
 ## Resources
 
@@ -128,7 +128,8 @@ module "collector_kinesis" {
 | <a name="input_cookie_domain"></a> [cookie\_domain](#input\_cookie\_domain) | Optional first party cookie domain for the collector to set cookies on (e.g. acme.com) | `string` | `""` | no |
 | <a name="input_custom_paths"></a> [custom\_paths](#input\_custom\_paths) | Optional custom paths that the collector will respond to, typical paths to override are '/com.snowplowanalytics.snowplow/tp2', '/com.snowplowanalytics.iglu/v1' and '/r/tp2'. e.g. { "/custom/path/" : "/com.snowplowanalytics.snowplow/tp2"} | `map(string)` | `{}` | no |
 | <a name="input_iam_permissions_boundary"></a> [iam\_permissions\_boundary](#input\_iam\_permissions\_boundary) | The permissions boundary ARN to set on IAM roles created | `string` | `""` | no |
-| <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type to use | `string` | `"t3.micro"` | no |
+| <a name="input_instance_type"></a> [instance\_type](#input\_instance\_type) | The instance type to use | `string` | `"t3a.micro"` | no |
+| <a name="input_java_opts"></a> [java\_opts](#input\_java\_opts) | Custom JAVA Options | `string` | `"-Dorg.slf4j.simpleLogger.defaultLogLevel=info -Dcom.amazonaws.sdk.disableCbor -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"` | no |
 | <a name="input_max_size"></a> [max\_size](#input\_max\_size) | The maximum number of servers in this server-group | `number` | `2` | no |
 | <a name="input_min_size"></a> [min\_size](#input\_min\_size) | The minimum number of servers in this server-group | `number` | `1` | no |
 | <a name="input_record_limit"></a> [record\_limit](#input\_record\_limit) | The number of events to buffer before pushing them to Kinesis | `number` | `500` | no |
@@ -145,7 +146,6 @@ module "collector_kinesis" {
 | <a name="output_asg_id"></a> [asg\_id](#output\_asg\_id) | ID of the ASG |
 | <a name="output_asg_name"></a> [asg\_name](#output\_asg\_name) | Name of the ASG |
 | <a name="output_sg_id"></a> [sg\_id](#output\_sg\_id) | ID of the security group attached to the Collector Server node |
-<!-- END_TF_DOCS -->
 
 # Copyright and license
 
