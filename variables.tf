@@ -99,6 +99,50 @@ variable "java_opts" {
   type        = string
 }
 
+# --- Auto-scaling options
+
+variable "enable_auto_scaling" {
+  description = "Whether to enable auto-scaling policies for the service"
+  default     = true
+  type        = bool
+}
+
+variable "scale_up_cooldown_sec" {
+  description = "Time (in seconds) until another scale-up action can occur"
+  default     = 180
+  type        = number
+}
+
+variable "scale_up_cpu_threshold_percentage" {
+  description = "The average CPU percentage that must be exceeded to scale-up"
+  default     = 60
+  type        = number
+}
+
+variable "scale_up_eval_minutes" {
+  description = "The number of consecutive minutes that the threshold must be breached to scale-up"
+  default     = 5
+  type        = number
+}
+
+variable "scale_down_cooldown_sec" {
+  description = "Time (in seconds) until another scale-down action can occur"
+  default     = 600
+  type        = number
+}
+
+variable "scale_down_cpu_threshold_percentage" {
+  description = "The average CPU percentage that we must be below to scale-down"
+  default     = 20
+  type        = number
+}
+
+variable "scale_down_eval_minutes" {
+  description = "The number of consecutive minutes that we must be below the threshold to scale-down"
+  default     = 60
+  type        = number
+}
+
 # --- Configuration options
 
 variable "good_stream_name" {
