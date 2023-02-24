@@ -26,7 +26,7 @@ data "aws_caller_identity" "current" {}
 
 module "telemetry" {
   source  = "snowplow-devops/telemetry/snowplow"
-  version = "0.3.0"
+  version = "0.4.0"
 
   count = var.telemetry_enabled ? 1 : 0
 
@@ -37,27 +37,6 @@ module "telemetry" {
   app_version      = local.app_version
   module_name      = local.module_name
   module_version   = local.module_version
-}
-
-data "aws_ami" "amazon_linux_2" {
-  most_recent = true
-
-  filter {
-    name   = "name"
-    values = ["amzn2-ami-hvm-*-x86_64-ebs"]
-  }
-
-  filter {
-    name   = "root-device-type"
-    values = ["ebs"]
-  }
-
-  filter {
-    name   = "virtualization-type"
-    values = ["hvm"]
-  }
-
-  owners = ["amazon"]
 }
 
 # --- CloudWatch: Logging
@@ -207,7 +186,7 @@ resource "aws_security_group_rule" "lb_egress_tcp_webserver" {
   security_group_id        = var.collector_lb_sg_id
 }
 
-# --- EC2: Auto-scaling group & Launch Configurations
+# --- EC2: Launch Templates, Auto-scaling group and Auto-scaling policies
 
 module "instance_type_metrics" {
   source  = "snowplow-devops/ec2-instance-type-metrics/aws"
@@ -252,59 +231,34 @@ locals {
   })
 }
 
-resource "aws_launch_configuration" "lc" {
-  name_prefix = "${var.name}-"
+module "service" {
+  source  = "snowplow-devops/service-ec2/aws"
+  version = "0.1.0"
 
-  image_id             = var.amazon_linux_2_ami_id == "" ? data.aws_ami.amazon_linux_2.id : var.amazon_linux_2_ami_id
-  instance_type        = var.instance_type
-  key_name             = var.ssh_key_name
-  iam_instance_profile = aws_iam_instance_profile.instance_profile.name
-  security_groups      = [aws_security_group.sg.id]
-  user_data            = local.user_data
+  user_supplied_script = local.user_data
+  name                 = var.name
+  tags                 = local.tags
 
-  # Note: Required if deployed in a public subnet
+  amazon_linux_2_ami_id       = var.amazon_linux_2_ami_id
+  instance_type               = var.instance_type
+  ssh_key_name                = var.ssh_key_name
+  iam_instance_profile_name   = aws_iam_instance_profile.instance_profile.name
   associate_public_ip_address = var.associate_public_ip_address
+  security_groups             = [aws_security_group.sg.id]
 
-  root_block_device {
-    volume_type           = "gp2"
-    volume_size           = "10"
-    delete_on_termination = true
-    encrypted             = true
-  }
+  min_size   = var.min_size
+  max_size   = var.max_size
+  subnet_ids = var.subnet_ids
 
-  lifecycle {
-    create_before_destroy = true
-  }
-}
+  target_group_arns = [var.collector_lb_tg_id]
 
-module "tags" {
-  source  = "snowplow-devops/tags/aws"
-  version = "0.2.0"
+  health_check_type = "ELB"
 
-  tags = local.tags
-}
-
-resource "aws_autoscaling_group" "asg" {
-  name = var.name
-
-  max_size = var.max_size
-  min_size = var.min_size
-
-  launch_configuration = aws_launch_configuration.lc.name
-
-  health_check_grace_period = 300
-  health_check_type         = "ELB"
-
-  target_group_arns   = [var.collector_lb_tg_id]
-  vpc_zone_identifier = var.subnet_ids
-
-  instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 90
-    }
-    triggers = ["tag"]
-  }
-
-  tags = module.tags.asg_tags
+  enable_auto_scaling                 = var.enable_auto_scaling
+  scale_up_cooldown_sec               = var.scale_up_cooldown_sec
+  scale_up_cpu_threshold_percentage   = var.scale_up_cpu_threshold_percentage
+  scale_up_eval_minutes               = var.scale_up_eval_minutes
+  scale_down_cooldown_sec             = var.scale_down_cooldown_sec
+  scale_down_cpu_threshold_percentage = var.scale_down_cpu_threshold_percentage
+  scale_down_eval_minutes             = var.scale_down_eval_minutes
 }
