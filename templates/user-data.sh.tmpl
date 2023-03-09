@@ -21,7 +21,8 @@ sudo docker run \
 %{ endif ~}
   -v $${CONFIG_DIR}:/snowplow/config \
   -p ${port}:${port} \
-  -e '${java_opts}' \
+  -e 'JAVA_OPTS=-Dconfig.override_with_env_vars=true ${java_opts}' \
+  -e "CONFIG_FORCE_collector_telemetry_instanceId=$(get_instance_id)" \
   snowplow/scala-stream-collector-kinesis:${version} \
   --config /snowplow/config/collector.hocon
 
