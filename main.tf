@@ -235,7 +235,7 @@ locals {
 
 module "service" {
   source  = "snowplow-devops/service-ec2/aws"
-  version = "0.1.1"
+  version = "0.2.0"
 
   user_supplied_script = local.user_data
   name                 = var.name
