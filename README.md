@@ -82,7 +82,7 @@ module "collector_kinesis" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_instance_type_metrics"></a> [instance\_type\_metrics](#module\_instance\_type\_metrics) | snowplow-devops/ec2-instance-type-metrics/aws | 0.1.2 |
-| <a name="module_service"></a> [service](#module\_service) | snowplow-devops/service-ec2/aws | 0.1.1 |
+| <a name="module_service"></a> [service](#module\_service) | snowplow-devops/service-ec2/aws | 0.2.0 |
 | <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.4.0 |
 
 ## Resources
