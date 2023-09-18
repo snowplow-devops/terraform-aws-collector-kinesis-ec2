@@ -199,6 +199,7 @@ locals {
   collector_hocon = templatefile("${path.module}/templates/config.hocon.tmpl", {
     port             = var.ingress_port
     paths            = var.custom_paths
+    cookie_enabled   = var.cookie_enabled
     cookie_domain    = var.cookie_domain
     good_stream_name = var.good_stream_name
     bad_stream_name  = var.bad_stream_name

@@ -161,6 +161,12 @@ variable "custom_paths" {
   type        = map(string)
 }
 
+variable "cookie_enabled" {
+  description = "Whether server side cookies are enabled or not"
+  default     = true
+  type        = bool
+}
+
 variable "cookie_domain" {
   description = "Optional first party cookie domain for the collector to set cookies on (e.g. acme.com)"
   default     = ""
