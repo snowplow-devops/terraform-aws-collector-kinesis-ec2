@@ -3,6 +3,12 @@ variable "name" {
   type        = string
 }
 
+variable "app_version" {
+  description = "App version to use. This variable facilitates dev flow, the modules may not work with anything other than the default value."
+  type        = string
+  default     = "2.9.2"
+}
+
 variable "vpc_id" {
   description = "The VPC to deploy the collector within"
   type        = string
@@ -95,7 +101,7 @@ variable "cloudwatch_logs_retention_days" {
 
 variable "java_opts" {
   description = "Custom JAVA Options"
-  default     = "-Dorg.slf4j.simpleLogger.defaultLogLevel=info -Dcom.amazonaws.sdk.disableCbor -XX:MinRAMPercentage=50 -XX:MaxRAMPercentage=75"
+  default     = "-Dcom.amazonaws.sdk.disableCbor -XX:InitialRAMPercentage=75 -XX:MaxRAMPercentage=75"
   type        = string
 }
 
