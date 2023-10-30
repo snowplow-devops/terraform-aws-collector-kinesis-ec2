@@ -1,8 +1,9 @@
 readonly CONFIG_DIR=/opt/snowplow/config
 
 sudo mkdir -p $${CONFIG_DIR}
-sudo cat << EOF > $${CONFIG_DIR}/collector.hocon
-${config}
+
+sudo base64 --decode << EOF > $${CONFIG_DIR}/collector.hocon
+${config_b64}
 EOF
 
 sudo docker run \
@@ -19,10 +20,10 @@ sudo docker run \
   --log-opt max-size=10m \
   --log-opt max-file=5 \
 %{ endif ~}
-  -v $${CONFIG_DIR}:/snowplow/config \
+  --mount type=bind,source=$${CONFIG_DIR},target=/snowplow/config \
+  --env JDK_JAVA_OPTIONS='${java_opts}' \
+  --env INSTANCE_ID=$(get_instance_id) \
   -p ${port}:${port} \
-  -e 'JAVA_OPTS=-Dconfig.override_with_env_vars=true ${java_opts}' \
-  -e "CONFIG_FORCE_collector_telemetry_instanceId=$(get_instance_id)" \
   snowplow/scala-stream-collector-kinesis:${version} \
   --config /snowplow/config/collector.hocon
 

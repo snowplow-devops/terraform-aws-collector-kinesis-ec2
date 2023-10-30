@@ -3,7 +3,7 @@ locals {
   module_version = "0.6.0"
 
   app_name    = "stream-collector"
-  app_version = "2.9.0"
+  app_version = var.app_version
 
   local_tags = {
     Name           = var.name
@@ -26,7 +26,7 @@ data "aws_caller_identity" "current" {}
 
 module "telemetry" {
   source  = "snowplow-devops/telemetry/snowplow"
-  version = "0.4.0"
+  version = "0.5.0"
 
   count = var.telemetry_enabled ? 1 : 0
 
@@ -220,9 +220,9 @@ locals {
   })
 
   user_data = templatefile("${path.module}/templates/user-data.sh.tmpl", {
-    port    = var.ingress_port
-    config  = local.collector_hocon
-    version = local.app_version
+    port       = var.ingress_port
+    config_b64 = base64encode(local.collector_hocon)
+    version    = local.app_version
 
     telemetry_script = join("", module.telemetry.*.amazon_linux_2_user_data)
 
