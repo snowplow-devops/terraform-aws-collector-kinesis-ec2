@@ -221,7 +221,7 @@ locals {
 
   user_data = templatefile("${path.module}/templates/user-data.sh.tmpl", {
     port       = var.ingress_port
-    config_b64 = base64encode(local.collector_hocon)
+    config_b64 = var.config_override_b64 == "" ? base64encode(local.collector_hocon) : var.config_override_b64
     version    = local.app_version
 
     telemetry_script = join("", module.telemetry.*.amazon_linux_2_user_data)
