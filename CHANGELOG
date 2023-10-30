@@ -1,3 +1,9 @@
+Version 0.7.0 (2023-10-30)
+--------------------------
+Normalize repo against other clouds (#38)
+Update to Snowplow Community Licence (#39)
+Add ability to supply custom configuration file override (#40)
+
 Version 0.6.0 (2023-09-21)
 --------------------------
 Add ability to disable server side cookies (#36)
