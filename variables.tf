@@ -9,6 +9,12 @@ variable "app_version" {
   default     = "2.9.2"
 }
 
+variable "config_override_b64" {
+  description = "App config uploaded as a base64 encoded blob. This variable facilitates dev flow, if config is incorrect this can break the deployment."
+  type        = string
+  default     = ""
+}
+
 variable "vpc_id" {
   description = "The VPC to deploy the collector within"
   type        = string
