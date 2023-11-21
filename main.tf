@@ -1,5 +1,5 @@
 locals {
-  module_name    = "collector-kinesis-ec2"
+  module_name    = "collector-${var.sink_type}-ec2"
   module_version = "0.7.0"
 
   app_name    = "stream-collector"
@@ -73,40 +73,115 @@ EOF
   permissions_boundary = var.iam_permissions_boundary
 }
 
+locals {
+  region     = data.aws_region.current.name
+  account_id = data.aws_caller_identity.current.account_id
+
+  kinesis_arn_list = formatlist(
+    "arn:aws:kinesis:%s:%s:stream/%s", local.region, local.account_id,
+    compact(tolist([
+      var.good_stream_name,
+      var.bad_stream_name
+    ]))
+  )
+
+  sqs_buffer_arn_list = formatlist(
+    "arn:aws:sqs:%s:%s:%s", local.region, local.account_id,
+    compact(tolist([
+      var.good_sqs_buffer_name,
+      var.bad_sqs_buffer_name
+    ]))
+  )
+
+  sqs_arn_list = formatlist(
+    "arn:aws:sqs:%s:%s:%s", local.region, local.account_id,
+    compact(tolist([
+      var.good_stream_name,
+      var.bad_stream_name
+    ]))
+  )
+
+  kinesis_statement = [{
+    Sid    = "WriteToOutputStream"
+    Effect = "Allow",
+    Action = [
+      "kinesis:DescribeStream",
+      "kinesis:DescribeStreamSummary",
+      "kinesis:List*",
+      "kinesis:Put*"
+    ],
+    Resource = local.kinesis_arn_list
+  }]
+
+  sqs_buffer_statement = [
+    {
+      Sid    = "WriteToOutputQueue"
+      Effect = "Allow",
+      Action = [
+        "sqs:GetQueueUrl",
+        "sqs:SendMessage"
+      ],
+      Resource = local.sqs_buffer_arn_list
+    },
+    {
+      Sid    = "ListQueues"
+      Effect = "Allow",
+      Action = [
+        "sqs:ListQueues"
+      ],
+      Resource = ["*"]
+    }
+  ]
+
+  sqs_statement = [
+    {
+      Sid    = "WriteToOutputQueue"
+      Effect = "Allow",
+      Action = [
+        "sqs:GetQueueUrl",
+        "sqs:SendMessage"
+      ],
+      Resource = local.sqs_arn_list
+    },
+    {
+      Sid    = "ListQueues"
+      Effect = "Allow",
+      Action = [
+        "sqs:ListQueues"
+      ],
+      Resource = ["*"]
+    }
+  ]
+
+  kinesis_statement_final    = var.sink_type == "kinesis" ? local.kinesis_statement : []
+  sqs_buffer_statement_final = var.sink_type == "kinesis" && var.enable_sqs_buffer ? local.sqs_buffer_statement : []
+  sqs_statement_final        = var.sink_type == "sqs" ? local.sqs_statement : []
+}
+
 resource "aws_iam_policy" "iam_policy" {
   name = var.name
 
-  policy = <<EOF
-{
-  "Version" : "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": [
-        "kinesis:DescribeStream",
-        "kinesis:DescribeStreamSummary",
-        "kinesis:List*",
-        "kinesis:Put*"
-      ],
-      "Resource": [
-        "arn:aws:kinesis:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stream/${var.good_stream_name}",
-        "arn:aws:kinesis:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:stream/${var.bad_stream_name}"
+  policy = jsonencode({
+    Version = "2012-10-17",
+    Statement = concat(
+      local.kinesis_statement_final,
+      local.sqs_buffer_statement_final,
+      local.sqs_statement_final,
+      [
+        {
+          Effect = "Allow",
+          Action = [
+            "logs:PutLogEvents",
+            "logs:CreateLogStream",
+            "logs:DescribeLogStreams"
+          ],
+          Resource = [
+            "arn:aws:logs:${local.region}:${local.account_id}:log-group:${local.cloudwatch_log_group_name}:*"
+          ]
+        }
       ]
-    },
-    {
-      "Effect": "Allow",
-      "Action": [
-        "logs:PutLogEvents",
-        "logs:CreateLogStream",
-        "logs:DescribeLogStreams"
-      ],
-      "Resource": [
-        "arn:aws:logs:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:log-group:${local.cloudwatch_log_group_name}:*"
-      ]
-    }
-  ]
-}
-EOF
+    )
+  })
 }
 
 resource "aws_iam_role_policy_attachment" "policy_attachment" {
@@ -197,16 +272,20 @@ module "instance_type_metrics" {
 
 locals {
   collector_hocon = templatefile("${path.module}/templates/config.hocon.tmpl", {
-    port             = var.ingress_port
-    paths            = var.custom_paths
-    cookie_enabled   = var.cookie_enabled
-    cookie_domain    = var.cookie_domain
-    good_stream_name = var.good_stream_name
-    bad_stream_name  = var.bad_stream_name
-    region           = data.aws_region.current.name
+    sink_type            = var.sink_type
+    port                 = var.ingress_port
+    paths                = var.custom_paths
+    cookie_enabled       = var.cookie_enabled
+    cookie_domain        = var.cookie_domain
+    good_stream_name     = var.good_stream_name
+    bad_stream_name      = var.bad_stream_name
+    enable_sqs_buffer    = var.enable_sqs_buffer
+    good_sqs_buffer_name = var.good_sqs_buffer_name
+    bad_sqs_buffer_name  = var.bad_sqs_buffer_name
+    region               = data.aws_region.current.name
 
-    byte_limit    = var.byte_limit
-    record_limit  = var.record_limit
+    byte_limit    = var.sink_type == "kinesis" ? var.byte_limit : min(var.byte_limit, 192000)
+    record_limit  = var.sink_type == "kinesis" ? var.record_limit : min(var.record_limit, 10)
     time_limit_ms = var.time_limit_ms
 
     telemetry_disable          = !var.telemetry_enabled
@@ -220,6 +299,7 @@ locals {
   })
 
   user_data = templatefile("${path.module}/templates/user-data.sh.tmpl", {
+    sink_type  = var.sink_type
     port       = var.ingress_port
     config_b64 = var.config_override_b64 == "" ? base64encode(local.collector_hocon) : var.config_override_b64
     version    = local.app_version

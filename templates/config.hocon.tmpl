@@ -63,8 +63,12 @@ collector {
     bad = ${bad_stream_name}
     useIpAddressAsPartitionKey = false
     sink {
-      enabled = kinesis
+      enabled = ${sink_type}
       region = ${region}
+%{ if sink_type == "kinesis" && enable_sqs_buffer ~}
+      sqsGoodBuffer = "${good_sqs_buffer_name}"
+      sqsBadBuffer = "${bad_sqs_buffer_name}"
+%{ endif ~}
       threadPoolSize = 10
       aws {
         accessKey = iam

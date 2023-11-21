@@ -157,14 +157,43 @@ variable "scale_down_eval_minutes" {
 
 # --- Configuration options
 
+variable "sink_type" {
+  description = "The stream technology to push messages into (either 'kinesis' or 'sqs')"
+  type        = string
+  default     = "kinesis"
+
+  validation {
+    condition     = contains(["kinesis", "sqs"], var.sink_type)
+    error_message = "Valid values for 'sink_type' are 'kinesis' or 'sqs'"
+  }
+}
+
 variable "good_stream_name" {
-  description = "The name of the good kinesis stream that the collector will insert data into"
+  description = "The name of the good kinesis/sqs stream that the collector will insert data into"
   type        = string
 }
 
 variable "bad_stream_name" {
-  description = "The name of the bad kinesis stream that the collector will insert data into"
+  description = "The name of the bad kinesis/sqs stream that the collector will insert data into"
   type        = string
+}
+
+variable "enable_sqs_buffer" {
+  description = "Whether to enable the optional sqs overflow buffer for kinesis (note: only works when 'sink_type' is 'kinesis')"
+  type        = bool
+  default     = false
+}
+
+variable "good_sqs_buffer_name" {
+  description = "The name of the good sqs queue to use as an overflow buffer for kinesis"
+  type        = string
+  default     = ""
+}
+
+variable "bad_sqs_buffer_name" {
+  description = "The name of the bad sqs queue to use as an overflow buffer for kinesis"
+  type        = string
+  default     = ""
 }
 
 variable "custom_paths" {
@@ -186,19 +215,19 @@ variable "cookie_domain" {
 }
 
 variable "byte_limit" {
-  description = "The amount of bytes to buffer events before pushing them to Kinesis"
+  description = "The amount of bytes to buffer events before pushing them downstream"
   default     = 1000000
   type        = number
 }
 
 variable "record_limit" {
-  description = "The number of events to buffer before pushing them to Kinesis"
+  description = "The number of events to buffer before pushing them downstream"
   default     = 500
   type        = number
 }
 
 variable "time_limit_ms" {
-  description = "The amount of time to buffer events before pushing them to Kinesis"
+  description = "The amount of time to buffer events before pushing them downstream"
   default     = 500
   type        = number
 }
