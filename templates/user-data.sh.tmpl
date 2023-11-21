@@ -24,7 +24,7 @@ sudo docker run \
   --env JDK_JAVA_OPTIONS='${java_opts}' \
   --env INSTANCE_ID=$(get_instance_id) \
   -p ${port}:${port} \
-  snowplow/scala-stream-collector-kinesis:${version} \
+  snowplow/scala-stream-collector-${sink_type}:${version} \
   --config /snowplow/config/collector.hocon
 
 ${telemetry_script}
