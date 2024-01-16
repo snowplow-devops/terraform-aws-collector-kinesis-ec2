@@ -1,6 +1,6 @@
 locals {
   module_name    = "collector-${var.sink_type}-ec2"
-  module_version = "0.8.0"
+  module_version = "0.8.1"
 
   app_name    = "stream-collector"
   app_version = var.app_version
@@ -316,7 +316,7 @@ locals {
 
 module "service" {
   source  = "snowplow-devops/service-ec2/aws"
-  version = "0.2.0"
+  version = "0.2.1"
 
   user_supplied_script = local.user_data
   name                 = var.name
