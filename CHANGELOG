@@ -1,3 +1,7 @@
+Version 0.8.1 (2024-01-16)
+--------------------------
+Bump service module to 0.2.1 (#44)
+
 Version 0.8.0 (2023-11-21)
 --------------------------
 Add support for the SQS sink and buffer (#42)
