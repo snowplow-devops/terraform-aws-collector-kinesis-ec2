@@ -23,6 +23,7 @@ sudo docker run \
   --mount type=bind,source=$${CONFIG_DIR},target=/snowplow/config \
   --env JDK_JAVA_OPTIONS='${java_opts}' \
   --env INSTANCE_ID=$(get_instance_id) \
+  --env ACCEPT_LIMITED_USE_LICENSE=${accept_limited_use_license} \
   -p ${port}:${port} \
   snowplow/scala-stream-collector-${sink_type}:${version} \
   --config /snowplow/config/collector.hocon

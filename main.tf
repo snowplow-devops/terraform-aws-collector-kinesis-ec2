@@ -299,6 +299,8 @@ locals {
   })
 
   user_data = templatefile("${path.module}/templates/user-data.sh.tmpl", {
+    accept_limited_use_license = var.accept_limited_use_license
+
     sink_type  = var.sink_type
     port       = var.ingress_port
     config_b64 = var.config_override_b64 == "" ? base64encode(local.collector_hocon) : var.config_override_b64
