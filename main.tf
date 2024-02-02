@@ -1,6 +1,6 @@
 locals {
   module_name    = "collector-${var.sink_type}-ec2"
-  module_version = "0.8.1"
+  module_version = "0.9.0"
 
   app_name    = "stream-collector"
   app_version = var.app_version
