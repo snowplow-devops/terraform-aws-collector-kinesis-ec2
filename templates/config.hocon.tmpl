@@ -59,30 +59,38 @@ collector {
     enabled = false
   }
   streams {
-    good = ${good_stream_name}
-    bad = ${bad_stream_name}
     useIpAddressAsPartitionKey = false
-    sink {
-      enabled = ${sink_type}
+    good {
+      name = ${good_stream_name}
       region = ${region}
 %{ if sink_type == "kinesis" && enable_sqs_buffer ~}
       sqsGoodBuffer = "${good_sqs_buffer_name}"
-      sqsBadBuffer = "${bad_sqs_buffer_name}"
 %{ endif ~}
-      threadPoolSize = 10
       aws {
         accessKey = iam
         secretKey = iam
       }
-      backoffPolicy {
-        minBackoff = 3000
-        maxBackoff = 10000
+      buffer {
+        byteLimit = ${byte_limit}
+        recordLimit = ${record_limit}
+        timeLimit = ${time_limit_ms}
       }
     }
-    buffer {
-      byteLimit = ${byte_limit}
-      recordLimit = ${record_limit}
-      timeLimit = ${time_limit_ms}
+    bad {
+      name = ${bad_stream_name}
+      region = ${region}
+%{ if sink_type == "kinesis" && enable_sqs_buffer ~}
+      sqsBadBuffer = "${bad_sqs_buffer_name}"
+%{ endif ~}
+      aws {
+        accessKey = iam
+        secretKey = iam
+      }
+      buffer {
+        byteLimit = ${byte_limit}
+        recordLimit = ${record_limit}
+        timeLimit = ${time_limit_ms}
+      }
     }
   }
   telemetry {
@@ -97,18 +105,5 @@ collector {
     moduleName = "${telemetry_module_name}"
     moduleVersion = "${telemetry_module_version}"
     instanceId = $${INSTANCE_ID}
-  }
-}
-akka {
-  loglevel = WARNING
-  loggers = ["akka.event.slf4j.Slf4jLogger"]
-  http.server {
-    remote-address-header = on
-    raw-request-uri-header = on
-    parsing {
-      max-uri-length = 32768
-      uri-parsing-mode = relaxed
-    }
-    max-connections = 2048
   }
 }
