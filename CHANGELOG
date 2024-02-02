@@ -1,3 +1,8 @@
+Version 0.9.0 (2024-02-02)
+--------------------------
+Update LICENSE to SLULA (#47)
+Update Collector to v3.0.1 (#48)
+
 Version 0.8.1 (2024-01-16)
 --------------------------
 Bump service module to 0.2.1 (#44)
