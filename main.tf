@@ -24,6 +24,25 @@ locals {
 data "aws_region" "current" {}
 data "aws_caller_identity" "current" {}
 
+locals {
+  is_aws_global = replace(data.aws_region.current.name, "cn-", "") == data.aws_region.current.name
+  iam_partition = local.is_aws_global ? "aws" : "aws-cn"
+
+  is_private_ecr_registry = var.private_ecr_registry != ""
+  private_ecr_registry_statement = [{
+    Action = [
+      "ecr:GetAuthorizationToken",
+      "ecr:BatchGetImage",
+      "ecr:GetDownloadUrlForLayer"
+    ]
+    Effect = "Allow"
+    Resource = [
+      "*"
+    ]
+  }]
+  private_ecr_registry_statement_final = local.is_private_ecr_registry ? local.private_ecr_registry_statement : []
+}
+
 module "telemetry" {
   source  = "snowplow-devops/telemetry/snowplow"
   version = "0.5.0"
@@ -78,7 +97,7 @@ locals {
   account_id = data.aws_caller_identity.current.account_id
 
   kinesis_arn_list = formatlist(
-    "arn:aws:kinesis:%s:%s:stream/%s", local.region, local.account_id,
+    "arn:${local.iam_partition}:kinesis:%s:%s:stream/%s", local.region, local.account_id,
     compact(tolist([
       var.good_stream_name,
       var.bad_stream_name
@@ -86,7 +105,7 @@ locals {
   )
 
   sqs_buffer_arn_list = formatlist(
-    "arn:aws:sqs:%s:%s:%s", local.region, local.account_id,
+    "arn:${local.iam_partition}:sqs:%s:%s:%s", local.region, local.account_id,
     compact(tolist([
       var.good_sqs_buffer_name,
       var.bad_sqs_buffer_name
@@ -94,7 +113,7 @@ locals {
   )
 
   sqs_arn_list = formatlist(
-    "arn:aws:sqs:%s:%s:%s", local.region, local.account_id,
+    "arn:${local.iam_partition}:sqs:%s:%s:%s", local.region, local.account_id,
     compact(tolist([
       var.good_stream_name,
       var.bad_stream_name
@@ -167,6 +186,7 @@ resource "aws_iam_policy" "iam_policy" {
       local.kinesis_statement_final,
       local.sqs_buffer_statement_final,
       local.sqs_statement_final,
+      local.private_ecr_registry_statement_final,
       [
         {
           Effect = "Allow",
@@ -176,7 +196,7 @@ resource "aws_iam_policy" "iam_policy" {
             "logs:DescribeLogStreams"
           ],
           Resource = [
-            "arn:aws:logs:${local.region}:${local.account_id}:log-group:${local.cloudwatch_log_group_name}:*"
+            "arn:${local.iam_partition}:logs:${local.region}:${local.account_id}:log-group:${local.cloudwatch_log_group_name}:*"
           ]
         }
       ]
@@ -313,6 +333,10 @@ locals {
 
     container_memory = "${module.instance_type_metrics.memory_application_mb}m"
     java_opts        = var.java_opts
+
+    is_private_ecr_registry = local.is_private_ecr_registry
+    private_ecr_registry    = var.private_ecr_registry
+    region                  = data.aws_region.current.name
   })
 }
 

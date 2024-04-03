@@ -6,6 +6,10 @@ sudo base64 --decode << EOF > $${CONFIG_DIR}/collector.hocon
 ${config_b64}
 EOF
 
+%{ if is_private_ecr_registry }
+aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin ${private_ecr_registry}
+%{ endif ~}
+
 sudo docker run \
   -d \
   --name collector \
@@ -25,7 +29,7 @@ sudo docker run \
   --env INSTANCE_ID=$(get_instance_id) \
   --env ACCEPT_LIMITED_USE_LICENSE=${accept_limited_use_license} \
   -p ${port}:${port} \
-  snowplow/scala-stream-collector-${sink_type}:${version} \
+  ${private_ecr_registry}snowplow/scala-stream-collector-${sink_type}:${version} \
   --config /snowplow/config/collector.hocon
 
 ${telemetry_script}
