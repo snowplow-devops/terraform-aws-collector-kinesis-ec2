@@ -256,3 +256,11 @@ variable "user_provided_id" {
   type        = string
   default     = ""
 }
+
+# --- Image Repositories
+
+variable "private_ecr_registry" {
+  description = "The URL of an ECR registry that the sub-account has access to (e.g. '000000000000.dkr.ecr.cn-north-1.amazonaws.com.cn/')"
+  type        = string
+  default     = ""
+}
