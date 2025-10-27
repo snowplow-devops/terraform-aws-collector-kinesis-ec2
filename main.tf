@@ -45,7 +45,7 @@ locals {
 
 module "telemetry" {
   source  = "snowplow-devops/telemetry/snowplow"
-  version = "0.5.0"
+  version = "0.6.0"
 
   count = var.telemetry_enabled ? 1 : 0
 
@@ -326,7 +326,7 @@ locals {
     config_b64 = var.config_override_b64 == "" ? base64encode(local.collector_hocon) : var.config_override_b64
     version    = local.app_version
 
-    telemetry_script = join("", module.telemetry.*.amazon_linux_2_user_data)
+    telemetry_script = join("", module.telemetry.*.amazon_linux_2023_user_data)
 
     cloudwatch_logs_enabled   = var.cloudwatch_logs_enabled
     cloudwatch_log_group_name = local.cloudwatch_log_group_name
@@ -342,13 +342,13 @@ locals {
 
 module "service" {
   source  = "snowplow-devops/service-ec2/aws"
-  version = "0.2.1"
+  version = "0.3.1"
 
   user_supplied_script = local.user_data
   name                 = var.name
   tags                 = local.tags
 
-  amazon_linux_2_ami_id       = var.amazon_linux_2_ami_id
+  amazon_linux_2023_ami_id    = var.amazon_linux_2023_ami_id
   instance_type               = var.instance_type
   ssh_key_name                = var.ssh_key_name
   iam_instance_profile_name   = aws_iam_instance_profile.instance_profile.name
