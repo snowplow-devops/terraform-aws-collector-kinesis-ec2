@@ -1,3 +1,10 @@
+Version 0.10.0 (2025-01-03)
+---------------------------
+Update to SLULA v1.1
+Bump app_version to v3.3.0
+Bumped service-ec2 to v0.3.1
+Bump app_version to v3.7.0
+
 Version 0.9.1 (2024-04-03)
 --------------------------
 Add support for AWS China regions (#51)
