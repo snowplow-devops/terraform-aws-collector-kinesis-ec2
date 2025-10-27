@@ -308,6 +308,9 @@ locals {
     record_limit  = var.sink_type == "kinesis" ? var.record_limit : min(var.record_limit, 10)
     time_limit_ms = var.time_limit_ms
 
+    compression_enabled = var.compression_enabled
+    compression_level   = var.compression_level
+
     telemetry_disable          = !var.telemetry_enabled
     telemetry_collector_uri    = join("", module.telemetry.*.collector_uri)
     telemetry_collector_port   = 443
