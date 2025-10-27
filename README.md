@@ -84,8 +84,8 @@ module "collector_kinesis" {
 | Name | Source | Version |
 |------|--------|---------|
 | <a name="module_instance_type_metrics"></a> [instance\_type\_metrics](#module\_instance\_type\_metrics) | snowplow-devops/ec2-instance-type-metrics/aws | 0.1.2 |
-| <a name="module_service"></a> [service](#module\_service) | snowplow-devops/service-ec2/aws | 0.2.1 |
-| <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.5.0 |
+| <a name="module_service"></a> [service](#module\_service) | snowplow-devops/service-ec2/aws | 0.3.1 |
+| <a name="module_telemetry"></a> [telemetry](#module\_telemetry) | snowplow-devops/telemetry/snowplow | 0.6.0 |
 
 ## Resources
 
@@ -120,13 +120,15 @@ module "collector_kinesis" {
 | <a name="input_subnet_ids"></a> [subnet\_ids](#input\_subnet\_ids) | The list of at least two subnets in different availability zones to deploy the collector across | `list(string)` | n/a | yes |
 | <a name="input_vpc_id"></a> [vpc\_id](#input\_vpc\_id) | The VPC to deploy the collector within | `string` | n/a | yes |
 | <a name="input_accept_limited_use_license"></a> [accept\_limited\_use\_license](#input\_accept\_limited\_use\_license) | Acceptance of the SLULA terms (https://docs.snowplow.io/limited-use-license-1.0/) | `bool` | `false` | no |
-| <a name="input_amazon_linux_2_ami_id"></a> [amazon\_linux\_2\_ami\_id](#input\_amazon\_linux\_2\_ami\_id) | The AMI ID to use which must be based of of Amazon Linux 2; by default the latest community version is used | `string` | `""` | no |
-| <a name="input_app_version"></a> [app\_version](#input\_app\_version) | App version to use. This variable facilitates dev flow, the modules may not work with anything other than the default value. | `string` | `"3.0.1"` | no |
+| <a name="input_amazon_linux_2023_ami_id"></a> [amazon\_linux\_2023\_ami\_id](#input\_amazon\_linux\_2023\_ami\_id) | The AMI ID to use which must be based of of Amazon Linux 2023; by default the latest community version is used | `string` | `""` | no |
+| <a name="input_app_version"></a> [app\_version](#input\_app\_version) | App version to use. This variable facilitates dev flow, the modules may not work with anything other than the default value. | `string` | `"3.7.0"` | no |
 | <a name="input_associate_public_ip_address"></a> [associate\_public\_ip\_address](#input\_associate\_public\_ip\_address) | Whether to assign a public ip address to this instance | `bool` | `true` | no |
 | <a name="input_bad_sqs_buffer_name"></a> [bad\_sqs\_buffer\_name](#input\_bad\_sqs\_buffer\_name) | The name of the bad sqs queue to use as an overflow buffer for kinesis | `string` | `""` | no |
 | <a name="input_byte_limit"></a> [byte\_limit](#input\_byte\_limit) | The amount of bytes to buffer events before pushing them downstream | `number` | `1000000` | no |
 | <a name="input_cloudwatch_logs_enabled"></a> [cloudwatch\_logs\_enabled](#input\_cloudwatch\_logs\_enabled) | Whether application logs should be reported to CloudWatch | `bool` | `true` | no |
 | <a name="input_cloudwatch_logs_retention_days"></a> [cloudwatch\_logs\_retention\_days](#input\_cloudwatch\_logs\_retention\_days) | The length of time in days to retain logs for | `number` | `7` | no |
+| <a name="input_compression_enabled"></a> [compression\_enabled](#input\_compression\_enabled) | Whether zstd compression is enabled for output data from the Collector | `bool` | `true` | no |
+| <a name="input_compression_level"></a> [compression\_level](#input\_compression\_level) | The zstd compression level to use (between 1-15) | `number` | `9` | no |
 | <a name="input_config_override_b64"></a> [config\_override\_b64](#input\_config\_override\_b64) | App config uploaded as a base64 encoded blob. This variable facilitates dev flow, if config is incorrect this can break the deployment. | `string` | `""` | no |
 | <a name="input_cookie_domain"></a> [cookie\_domain](#input\_cookie\_domain) | Optional first party cookie domain for the collector to set cookies on (e.g. acme.com) | `string` | `""` | no |
 | <a name="input_cookie_enabled"></a> [cookie\_enabled](#input\_cookie\_enabled) | Whether server side cookies are enabled or not | `bool` | `true` | no |
@@ -148,7 +150,7 @@ module "collector_kinesis" {
 | <a name="input_scale_up_cpu_threshold_percentage"></a> [scale\_up\_cpu\_threshold\_percentage](#input\_scale\_up\_cpu\_threshold\_percentage) | The average CPU percentage that must be exceeded to scale-up | `number` | `60` | no |
 | <a name="input_scale_up_eval_minutes"></a> [scale\_up\_eval\_minutes](#input\_scale\_up\_eval\_minutes) | The number of consecutive minutes that the threshold must be breached to scale-up | `number` | `5` | no |
 | <a name="input_sink_type"></a> [sink\_type](#input\_sink\_type) | The stream technology to push messages into (either 'kinesis' or 'sqs') | `string` | `"kinesis"` | no |
-| <a name="input_ssh_ip_allowlist"></a> [ssh\_ip\_allowlist](#input\_ssh\_ip\_allowlist) | The list of CIDR ranges to allow SSH traffic from | `list(any)` | <pre>[<br>  "0.0.0.0/0"<br>]</pre> | no |
+| <a name="input_ssh_ip_allowlist"></a> [ssh\_ip\_allowlist](#input\_ssh\_ip\_allowlist) | The list of CIDR ranges to allow SSH traffic from | `list(any)` | <pre>[<br/>  "0.0.0.0/0"<br/>]</pre> | no |
 | <a name="input_tags"></a> [tags](#input\_tags) | The tags to append to this resource | `map(string)` | `{}` | no |
 | <a name="input_telemetry_enabled"></a> [telemetry\_enabled](#input\_telemetry\_enabled) | Whether or not to send telemetry information back to Snowplow Analytics Ltd | `bool` | `true` | no |
 | <a name="input_time_limit_ms"></a> [time\_limit\_ms](#input\_time\_limit\_ms) | The amount of time to buffer events before pushing them downstream | `number` | `500` | no |
