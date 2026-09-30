@@ -285,7 +285,7 @@ resource "aws_security_group_rule" "lb_egress_tcp_webserver" {
 
 module "instance_type_metrics" {
   source  = "snowplow-devops/ec2-instance-type-metrics/aws"
-  version = "0.1.2"
+  version = "0.1.3"
 
   instance_type = var.instance_type
 }
